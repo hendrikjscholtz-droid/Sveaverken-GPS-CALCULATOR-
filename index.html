@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>2.5 cm GPS return on investment calculator</title>
+<style>
+:root{--bg:#ffffff;--sf:#f2f7fd;--tx:#0a1f3d;--mu:#50627d;--ln:#c9d8ea;--ac:#0b4f9e;--ak:#fff;--hi:#ffcd00;--bb:#0b4f9e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#08172e;--sf:#0f2442;--tx:#eef3fa;--mu:#a3b4cc;--ln:#28446b;--ac:#ffcd00;--ak:#08172e;--hi:#ffcd00;--bb:#0d3a78}}
+:root[data-theme="dark"]{--bg:#08172e;--sf:#0f2442;--tx:#eef3fa;--mu:#a3b4cc;--ln:#28446b;--ac:#ffcd00;--ak:#08172e;--hi:#ffcd00;--bb:#0d3a78}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 "Trebuchet MS",Verdana,sans-serif}
+main{max-width:760px;margin:0 auto;padding:20px 16px 96px}
+h1{font:700 26px/1.2 Georgia,serif;margin:8px 0 4px;color:var(--ac)}
+.brand{background:var(--bb);color:#fff;border-bottom:5px solid #ffcd00;padding:14px 16px;margin:-20px -16px 16px;border-radius:0 0 10px 10px}
+.brand b{font:700 24px Georgia,serif;display:block}
+.brand span{font-size:13px;opacity:.9}
+p.lead{color:var(--mu);margin:0 0 16px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button{flex:1;padding:12px;border:2px solid var(--ac);background:transparent;color:var(--ac);font:inherit;font-weight:700;border-radius:8px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ac);color:var(--ak)}
+:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+section{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font:700 18px/1.3 Georgia,serif;margin:0 0 12px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:14px;color:var(--mu)}
+input,select{width:100%;margin-top:4px;padding:10px;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--ln);border-radius:6px}
+.big{font:700 34px/1.1 Georgia,serif;color:var(--ac);margin:4px 0}
+.row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--ln)}
+.row:last-child{border:0}
+.sc{overflow-x:auto}
+.prac{border:1px solid var(--ln);border-radius:8px;padding:12px;margin-bottom:12px}
+.prac .top{display:flex;gap:8px;align-items:flex-end;margin-bottom:8px}
+button.sm{padding:9px 14px;border-radius:6px;border:1px solid var(--ac);background:transparent;color:var(--ac);font:inherit;cursor:pointer}
+.alert{border:2px solid var(--hi);background:var(--sf);border-radius:10px;padding:16px;margin-bottom:16px}
+.alert a{display:inline-block;margin:6px 8px 0 0;padding:10px 14px;border-radius:6px;background:var(--ac);color:var(--ak);text-decoration:none;font-weight:700}
+.note{font-size:13px;color:var(--mu)}
+input,select{min-height:46px}
+#bar{position:fixed;left:0;right:0;bottom:0;background:var(--bb);color:#fff;border-top:4px solid #ffcd00;padding:8px 16px;display:flex;justify-content:space-between;gap:8px;font-size:14px;z-index:5}
+#bar b{display:block;font-size:17px}
+@media (max-width:520px){.g{grid-template-columns:1fr 1fr}.prac .g{grid-template-columns:1fr}.big{font-size:30px}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<div class="brand"><b>Sveaverken</b><span>Presents the 2.5 cm GPS return on investment calculator</span></div>
+<h1>2.5 cm GPS: what will it pay back?</h1>
+<p class="lead">Straight-line steering with 2.5 cm accuracy removes overlap between passes. That saves fuel, seed, fertiliser, chemical and machine time.</p>
+
+<div class="tabs" role="tablist">
+<button role="tab" id="t2" aria-selected="true" aria-controls="p2">Exact calculator (recommended)</button>
+<button role="tab" id="t1" aria-selected="false" aria-controls="p1" style="flex:.6;opacity:.7">Quick estimate</button>
+</div>
+
+<div id="p1" role="tabpanel" aria-labelledby="t1" hidden>
+<section><h2>Your farm</h2>
+<p class="note">This quick estimate uses one set of numbers for your whole farm, so it can be far off. To know what you are really spending and saving, use the exact calculator.</p>
+<div class="g">
+<label>Hectares per year<input id="s_ha" type="number" value="400" min="0"></label>
+<label>Implement width (m)<input id="s_w" type="number" value="18" min="0.5" step="0.5"></label>
+<label>GPS accuracy (cm)<input id="s_acc" type="number" value="2.5" min="0" step="0.5"></label>
+<label>Manual overlap (%)<input id="s_ov" type="number" value="15" min="0" step="0.5"></label>
+<label>Fuel cost per ha<input id="s_fuel" type="number" value="350" min="0"></label>
+<label>Input cost per ha<input id="s_inp" type="number" value="1500" min="0"></label>
+<label>Currency<select class="cur"></select></label>
+</div></section>
+<section><h2>Result</h2>
+<div class="note">Total yearly savings</div><div class="big" id="s_tot"></div>
+<div class="row"><span>Hectares saved</span><b id="s_sv"></b></div>
+<div class="row"><span>Fuel savings</span><b id="s_f"></b></div>
+<div class="row"><span>Input savings</span><b id="s_i"></b></div>
+<div class="row"><span>Manual overlap width</span><b id="s_mw"></b></div>
+<div class="row"><span>GPS overlap width</span><b id="s_gw"></b></div>
+<div class="row"><span>Overlap reduction</span><b id="s_red"></b></div>
+</section></div>
+
+<div id="p2" role="tabpanel" aria-labelledby="t2">
+<section><h2>System and costs</h2>
+<div class="g">
+<label>Currency<select class="cur" id="e_cur"></select></label>
+<label>GPS system cost<input id="e_cost" type="number" value="115000" min="0"></label>
+<p class="note" style="grid-column:1/-1;margin:0">Talk to your Sveaverken dealer to get the correct price. Dealers can give a discount, so your real cost may be lower.</p>
+<label>Yearly subscription or correction fee<input id="e_fee" type="number" value="12000" min="0"></label>
+<label>Years of use<input id="e_yrs" type="number" value="3" min="1"></label>
+<label>GPS accuracy (cm)<input id="e_acc" type="number" value="2.5" min="0" step="0.5"></label>
+<label>Fuel price per litre<input id="e_fp" type="number" value="24" min="0" step="0.1"></label>
+<label>What does your machine cost? (total purchase price)<input id="e_mp" type="number" value="1500000" min="0"></label>
+<label>Labour cost<input id="e_lab" type="number" value="60" min="0"></label>
+<label>Labour cost is per<select id="e_lp"><option value="h">Hour</option><option value="w">Week</option><option value="m">Month</option></select></label>
+<label>Working hours per week (for week or month pay)<input id="e_lh" type="number" value="45" min="1"></label>
+<p class="note" style="grid-column:1/-1;margin:0">Machine cost per hour is the purchase price divided by 10 000 hours, plus 30% for repairs and servicing. Your machine costs <b id="e_hrout"></b> per hour including labour.</p>
+
+</div></section>
+<section><h2>Your working practices</h2>
+<p class="note">Use your real figures for every practice: hectares per year, hectares per hour and litres of fuel per hectare. Overlap starts at 15% for each implement. Change it to what you really see in the field.</p>
+<div id="list"></div>
+<button class="sm" id="add">Add practice</button></section>
+
+<div class="alert" id="alert" hidden>
+<h2>Strong return: let us help you set this up</h2>
+<p id="amsg"></p>
+<a id="mail" href="#">Email us your results</a><a id="wa" href="#">WhatsApp us</a><a id="tel" href="#">Call us</a>
+<p class="note">If a button does not open, contact us on +27 71 914 7569 or hendrikjscholtz@icloud.com.</p>
+</div>
+
+<section><h2>Result</h2>
+<div class="note">Net savings per year (after fees)</div><div class="big" id="e_net"></div>
+<div class="row"><span>Gross savings per year</span><b id="e_gross"></b></div>
+<div class="row"><span>Fuel saved per year</span><b id="e_fs"></b></div>
+<div class="row"><span>Inputs and repair costs saved per year</span><b id="e_is"></b></div>
+<div class="row"><span>Machine and labour saved per year</span><b id="e_ts"></b></div>
+
+<div class="row"><span>Hectares saved, litres saved, hours saved</span><b id="e_phys"></b></div>
+<div class="row"><span>Payback period</span><b id="e_pb"></b></div>
+<div class="row"><span>Total return over system life</span><b id="e_life"></b></div>
+<div class="row"><span>Return on investment</span><b id="e_roi"></b></div>
+<div class="sc"><table id="tbl" style="width:100%;font-size:13px;border-collapse:collapse"></table></div>
+<p class="note">Estimates only. Real savings depend on field shapes, drivers and the practices you run.</p>
+</section>
+
+<section hidden><h2>Alert settings</h2>
+<div class="g">
+<label>Alert when this is over<input id="a_lim" type="number" value="25000"></label>
+<label>Based on<select id="a_basis"><option value="year">Net savings per year</option><option value="life" selected>Total return over system life</option></select></label>
+<label>Your email<input id="a_mail" type="email" value="hendrikjscholtz@icloud.com"></label>
+<label>Your phone (with country code)<input id="a_ph" type="tel" value="27719147569"></label>
+</div>
+<p class="note">Browsers cannot send email silently. At the limit, the client sees buttons that open a ready-written email, WhatsApp message or call to you.</p></section>
+</div>
+</main>
+<div id="bar"><span>Net savings per year<b id="b_net"></b></span><span style="text-align:right">Total return over life<b id="b_life"></b></span></div>
+<script>
+var CUR=[["R","ZAR"],["$","USD"],["€","EUR"],["£","GBP"],["K","ZMW"],["P","BWP"],["N$","NAD"],["KSh","KES"]];
+var cur="R";
+function $(i){return document.getElementById(i)}
+function fm(n){return cur+" "+Math.round(n).toLocaleString("en-ZA").replace(/\u00a0/g," ")}
+function nm(n,d){return (+n).toLocaleString("en-ZA",{maximumFractionDigits:d==null?1:d})}
+function v(i){return parseFloat($(i).value)||0}
+document.querySelectorAll(".cur").forEach(function(s){
+ CUR.forEach(function(c){var o=document.createElement("option");o.value=c[0];o.textContent=c[0]+" ("+c[1]+")";s.appendChild(o)});
+ s.onchange=function(){cur=s.value;document.querySelectorAll(".cur").forEach(function(x){x.value=cur});calc()}
+});
+// tabs
+["t1","t2"].forEach(function(id,k){$(id).onclick=function(){
+ $("t1").setAttribute("aria-selected",k==0);$("t2").setAttribute("aria-selected",k==1);
+ $("p1").hidden=k!=0;$("p2").hidden=k!=1;calc()}});
+// simple
+function simple(){
+ var ha=v("s_ha"),w=Math.max(v("s_w"),.01),g=v("s_acc")/100,mo=v("s_ov")/100*w;
+ var sv=Math.max(0,ha*(mo-g)/w);
+ $("s_sv").textContent=nm(sv)+" ha";
+ $("s_f").textContent=fm(sv*v("s_fuel"));$("s_i").textContent=fm(sv*v("s_inp"));
+ $("s_tot").textContent=fm(sv*(v("s_fuel")+v("s_inp")));
+ $("s_mw").textContent=nm(mo,2)+" m";$("s_gw").textContent=nm(g,3)+" m";
+ $("s_red").textContent=mo>0?nm(Math.max(0,(mo-g)/mo*100))+"%":"0%";
+}
+// exact
+var DEF=[["Ripping",200,1.5,22,3,15,40000,1],["Ploughing",200,1.2,18,3,15,50000,1],["Discing",400,3,10,6,15,30000,1],["Tilling",300,2.5,12,6,15,25000,1],["Planting",400,3,8,6,15,900],["Spraying",400,18,1.5,24,15,250],["Fertiliser spreading",400,10,1,12,15,1100],["Harvesting",400,2.5,12,8,15,0]];
+// fields: name, ha/yr, ha/h, L/ha, width m, manual overlap %, input cost/ha
+function addP(d){
+ d=d||["",0,1,0,6,15,0,0];
+ var e=document.createElement("div");e.className="prac";
+ e.innerHTML='<div class="top"><label style="flex:1">Practice<input class="n" value="'+d[0]+'"></label><button class="sm rm" type="button">Remove</button></div>'+
+ '<div class="g"><label>Hectares per year<input class="a" type="number" min="0" value="'+d[1]+'"></label>'+
+ '<label>Hectares per hour<input class="b" type="number" min="0.1" step="0.1" value="'+d[2]+'"></label>'+
+ '<label>Litres of fuel per ha<input class="c" type="number" min="0" step="0.1" value="'+d[3]+'"></label>'+
+ '<label>Implement width (m)<input class="w" type="number" min="0.5" step="0.5" value="'+d[4]+'"></label>'+
+ '<label>Manual overlap (%)<input class="o" type="number" min="0" step="0.5" value="'+d[5]+'"></label>'+
+ '<label><span class="il">Input cost per ha</span><input class="i" type="number" min="0" value="'+d[6]+'"></label>'+
+ '<label style="display:flex;gap:8px;align-items:center;margin-top:20px;color:var(--tx)"><input class="ge" type="checkbox" style="width:auto;margin:0"'+(d[7]?' checked':'')+'> Ground engaging (ripping, ploughing, discing, tilling)</label></div>';
+ e.querySelector(".rm").onclick=function(){e.remove();calc()};
+ var gi=e.querySelector(".ge"),lab=function(){e.querySelector(".il").textContent=gi.checked?"Repair cost for one season (total)":"Input cost per ha"};
+ gi.onchange=lab;lab();
+ $("list").appendChild(e);
+}
+DEF.forEach(addP);
+$("add").onclick=function(){addP();calc()};
+function lh(){var l=v("e_lab"),w=Math.max(v("e_lh"),1),p=$("e_lp").value;return p=="h"?l:p=="w"?l/w:l*12/52/w}
+function exact(){
+ var g=v("e_acc")/100,fp=v("e_fp"),hr=v("e_mp")/10000*1.3+lh(),F=0,I=0,T=0,H=0,L=0,Hh=0,rows="";
+ document.querySelectorAll(".prac").forEach(function(p){
+  var q=function(c){return parseFloat(p.querySelector("."+c).value)||0};
+  var w=Math.max(q("w"),.01),sv=Math.max(0,q("a")*(q("o")/100*w-g)/w);
+  var lt=sv*q("c"),hs=sv/Math.max(q("b"),.01);
+  var ip=p.querySelector(".ge").checked?hs*q("i")/Math.max(q("a")/Math.max(q("b"),.01),.01):sv*q("i");F+=lt*fp;I+=ip;T+=hs*hr;H+=sv;L+=lt;Hh+=hs;
+  rows+="<tr><td style='padding:4px 6px 4px 0'>"+(p.querySelector(".n").value||"Practice").replace(/</g,"")+"</td><td>"+nm(sv)+" ha</td><td>"+fm(lt*fp+ip+hs*hr)+"</td></tr>";
+ });
+ var gross=F+I+T,net=gross-v("e_fee"),yrs=Math.max(v("e_yrs"),1),life=net*yrs-v("e_cost");
+ $("e_hrout").textContent=fm(hr);$("b_net").textContent=fm(net);$("b_life").textContent=fm(life);$("e_gross").textContent=fm(gross);$("e_fs").textContent=fm(F);$("e_is").textContent=fm(I);
+ $("e_ts").textContent=fm(T);$("e_net").textContent=fm(net);
+ $("e_phys").textContent=nm(H)+" ha, "+nm(L,0)+" L, "+nm(Hh)+" h";
+ $("e_pb").textContent=net>0?nm(v("e_cost")/net*12)+" months":"No payback";
+ $("e_life").textContent=fm(life);
+ $("e_roi").textContent=v("e_cost")>0?nm(life/v("e_cost")*100,0)+"%":"-";
+ $("tbl").innerHTML="<tr style='text-align:left'><th>Practice</th><th>Hectares saved</th><th>Savings per year</th></tr>"+rows;
+ var val=$("a_basis").value=="year"?net:life,lim=v("a_lim"),on=val>lim;
+ $("alert").hidden=!on;
+ if(on){
+  var txt="Hello, I used the 2.5 cm GPS calculator. My estimated "+($("a_basis").value=="year"?"net savings per year":"total return over system life")+" is "+fm(val)+". Please contact me.";
+  $("amsg").textContent="Your estimated "+($("a_basis").value=="year"?"net savings per year":"return over the system life")+" is "+fm(val)+". Get in touch and we will confirm the numbers for your farm.";
+  $("mail").href="mailto:"+encodeURIComponent($("a_mail").value).replace("%40","@")+"?subject="+encodeURIComponent("GPS ROI enquiry")+"&body="+encodeURIComponent(txt);
+  var ph=$("a_ph").value.replace(/\D/g,"");
+  $("wa").href="https://wa.me/"+ph+"?text="+encodeURIComponent(txt);
+  $("tel").href="tel:+"+ph;
+ }
+}
+function calc(){document.querySelectorAll("input[type=number]").forEach(function(i){i.setAttribute("inputmode","decimal")});$("bar").hidden=$("p2").hidden;simple();exact()}
+document.addEventListener("input",calc);
+calc();
+</script>
+</body>
+</html>
