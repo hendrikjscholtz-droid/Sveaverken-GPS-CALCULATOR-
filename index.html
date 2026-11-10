@@ -45,7 +45,7 @@ input,select{min-height:46px}
 </head>
 <body>
 <main>
-<div class="brand"><b>Sveaverken</b><span>Presents the 2.5 cm GPS return on investment calculator</span></div>
+<div class="brand"><b>SVEAVERKEN PLATTELAND</b><span>Presents the 2.5 cm GPS return on investment calculator</span></div>
 <h1>2.5 cm GPS: what will it pay back?</h1>
 <p class="lead">Straight-line steering with 2.5 cm accuracy removes overlap between passes. That saves fuel, seed, fertiliser, chemical and machine time.</p>
 
@@ -137,7 +137,7 @@ var cur="R";
 function $(i){return document.getElementById(i)}
 function fm(n){return cur+" "+Math.round(n).toLocaleString("en-ZA").replace(/\u00a0/g," ")}
 function nm(n,d){return (+n).toLocaleString("en-ZA",{maximumFractionDigits:d==null?1:d})}
-function v(i){return parseFloat($(i).value)||0}
+function v(i){return parseFloat(String($(i).value).replace(",","."))||0}
 document.querySelectorAll(".cur").forEach(function(s){
  CUR.forEach(function(c){var o=document.createElement("option");o.value=c[0];o.textContent=c[0]+" ("+c[1]+")";s.appendChild(o)});
  s.onchange=function(){cur=s.value;document.querySelectorAll(".cur").forEach(function(x){x.value=cur});calc()}
@@ -181,7 +181,7 @@ function lh(){var l=v("e_lab"),w=Math.max(v("e_lh"),1),p=$("e_lp").value;return 
 function exact(){
  var g=v("e_acc")/100,fp=v("e_fp"),hr=v("e_mp")/10000*1.3+lh(),F=0,I=0,T=0,H=0,L=0,Hh=0,rows="";
  document.querySelectorAll(".prac").forEach(function(p){
-  var q=function(c){return parseFloat(p.querySelector("."+c).value)||0};
+  var q=function(c){return parseFloat(String(p.querySelector("."+c).value).replace(",","."))||0};
   var w=Math.max(q("w"),.01),sv=Math.max(0,q("a")*(q("o")/100*w-g)/w);
   var lt=sv*q("c"),hs=sv/Math.max(q("b"),.01);
   var ip=p.querySelector(".ge").checked?hs*q("i")/Math.max(q("a")/Math.max(q("b"),.01),.01):sv*q("i");F+=lt*fp;I+=ip;T+=hs*hr;H+=sv;L+=lt;Hh+=hs;
@@ -206,7 +206,7 @@ function exact(){
   $("tel").href="tel:+"+ph;
  }
 }
-function calc(){document.querySelectorAll("input[type=number]").forEach(function(i){i.setAttribute("inputmode","decimal")});$("bar").hidden=$("p2").hidden;simple();exact()}
+function calc(){document.querySelectorAll("input[type=number]").forEach(function(i){i.setAttribute("inputmode","decimal");i.type="text"});$("bar").hidden=$("p2").hidden;simple();exact()}
 document.addEventListener("input",calc);
 calc();
 </script>
